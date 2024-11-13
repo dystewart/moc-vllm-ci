@@ -1,0 +1,25 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: vllm-main-buildconfig
+  namespace: vllm-test
+spec:
+  source:
+    type: Git
+    git:
+      uri: "https://github.com/dystewart/vllm.git"
+      ref: "build"  # Use the branch that contains your Dockerfile
+  strategy:
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: Dockerfile # Path to Dockerfile relative to repo root
+  output:
+    to:
+      kind: ImageStreamTag
+      name: "vllm-main-test:latest"  # Tag of the resulting image
+  triggers:
+    - type: ConfigChange
+    - type: GitHub
+      github:
+        secretReference:
+          name: webhook-secret  # Optional, for GitHub webhooks
